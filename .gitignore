@@ -1,0 +1,20 @@
+# Run records: local audit trail, machine-specific and can contain distilled
+# work content. Keep them out of git.
+runs/*.json
+runs/*.out.txt
+runs/.collector-last-day
+
+# Thread content is yours - decide deliberately whether it belongs in a repo.
+# Uncomment these to keep the harness code in git but thread data local:
+# threads/*/memory.md
+# threads/*/inbox/
+# threads/*/artifacts/
+# threads/*/sessions/
+
+# Scout state
+agents/collector/state.md
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spindle</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===== Left: threads ===== -->
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">S</div>
+      <div>
+        <div class="brand-name">Spindle</div>
+        <div class="brand-sub" id="engine-badge">engine: &hellip;</div>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search all threads&hellip;" autocomplete="off">
+    </div>
+    <div id="search-results" class="hidden"></div>
+
+    <div class="threads-head">
+      <span>Threads</span>
+      <button id="new-thread" title="New thread">+ New</button>
+    </div>
+    <nav id="thread-list" aria-label="Threads"></nav>
+
+    <div class="sidebar-foot">
+      <button id="run-collector">Run Scout now</button>
+      <div class="theme-row">
+        <select id="theme-sel" title="Theme (ported from opencode)"></select>
+        <button id="mode-toggle" title="Toggle light/dark">dark</button>
+      </div>
+      <div class="foot-note" id="sched-note"></div>
+    </div>
+  </aside>
+
+  <!-- ===== Center: conversation ===== -->
+  <main id="main">
+    <header id="thread-header" class="hidden">
+      <div class="thread-line" id="thread-line"></div>
+      <div class="thread-header-row">
+        <h1 id="thread-title"></h1>
+        <div class="header-actions">
+          <button id="btn-reflect" title="Run the Librarian: update memory and skills from recent sessions">Reflect &amp; learn</button>
+          <button id="btn-sync" title="Rebuild AGENTS.md from charter.md">Sync contract</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="empty-state">
+      <div class="empty-card">
+        <h2>Pick a thread, or spin a new one</h2>
+        <p>Each thread is a folder with its own charter, memory, skills, inbox, and artifacts. The agent you talk to here reads all of it automatically.</p>
+        <p class="empty-hint">Start with the bundled <b>getting-started</b> thread &mdash; it explains the harness from the inside.</p>
+      </div>
+    </div>
+
+    <div id="chat" class="hidden" aria-live="polite"></div>
+
+    <footer id="composer" class="hidden">
+      <textarea id="input" rows="3" placeholder="Message this thread&hellip;  (Ctrl+Enter to send)"></textarea>
+      <button id="send">Send</button>
+    </footer>
+  </main>
+
+  <!-- ===== Right: workspace ===== -->
+  <aside id="workspace" class="hidden">
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="inbox">Inbox <span id="inbox-count" class="pill hidden"></span></button>
+      <button class="tab" data-tab="files">Files</button>
+      <button class="tab" data-tab="runs">Runs</button>
+    </div>
+    <section id="tab-inbox" class="tab-panel"></section>
+    <section id="tab-files" class="tab-panel hidden"></section>
+    <section id="tab-runs" class="tab-panel hidden"></section>
+    <div id="preview" class="hidden">
+      <div class="preview-bar">
+        <button id="preview-back">&larr; Back</button>
+        <span id="preview-name"></span>
+        <a id="preview-open" href="#" target="_blank" rel="noopener">Open in tab</a>
+      </div>
+      <div id="preview-body"></div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- New thread dialog -->
+<dialog id="dlg-new">
+  <form method="dialog" id="new-form">
+    <h2>New thread</h2>
+    <label>Title<input id="nt-title" required placeholder="e.g. TEL pricing follow-up"></label>
+    <label>Purpose<textarea id="nt-purpose" rows="3" placeholder="What is this thread for? The charter can be refined later in charter.md."></textarea></label>
+    <div class="dlg-actions">
+      <button value="cancel" formnovalidate>Cancel</button>
+      <button value="ok" class="primary">Create thread</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="/ui/themes.js"></script>
+<script src="/ui/app.js"></script>
+</body>
+</html>

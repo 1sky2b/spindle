@@ -1,0 +1,16 @@
+{
+  "port": 4321,
+  "engine": {
+    "mode": "mock",
+    "command": ["opencode", "run", "{prompt}"],
+    "timeoutMs": 600000,
+    "_notes": "mode: 'mock' (test UI without opencode) or 'opencode'. The command array is a template; {prompt} and {cwd} are replaced at run time. Verify flags with `opencode run --help` on your machine - e.g. add '--model', or session flags - and adjust here. No code changes needed."
+  },
+  "scheduler": {
+    "enabled": true,
+    "collectorTime": "07:30",
+    "checkEveryMs": 60000,
+    "_notes": "Runs the Scout (collector) once per day at collectorTime while the server is running. For runs even when Spindle is closed, use Windows Task Scheduler instead - see docs/extending.md."
+  },
+  "threadColors": ["#C98F1F", "#2F7E6D", "#A5522E", "#6E4B8E", "#3E6C93", "#7A6A2F"]
+}
