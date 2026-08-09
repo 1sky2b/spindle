@@ -1,6 +1,6 @@
 {
   "kind": "message", "agent": "thread", "thread": "tel-cd100-renewal",
-  "startedAt": "{{ISO:-25h}}", "status": "done", "durationMs": 41800, "exitCode": 0,
+  "startedAt": "{{ISO-25h}}", "status": "done", "durationMs": 41800, "exitCode": 0,
   "promptChars": 412, "outputChars": 1120,
   "output": "Read the opening quote from the inbox and built the comparison table. TEL opens at +5.5% - $1.50M year 1 against a $1.47M ceiling. Saved the quotes-comparison CSV to artifacts. Flagged the buried Sunday-coverage drop as a scope reduction per the charter."
 }

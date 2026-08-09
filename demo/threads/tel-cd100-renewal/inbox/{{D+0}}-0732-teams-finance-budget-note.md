@@ -8,4 +8,4 @@ true-up if we settle higher.
 Practical effect: the TEL term sheet needs to be agreed ~1 week earlier than
 planned. Legal's 4-week runway now means term sheet to M. Reyes by **Sep 11**.
 
-Source: Teams, Category-WetProcess channel, {{D:0}} 07:26 - distilled by Scout
+Source: Teams, Category-WetProcess channel, {{D+0}} 07:26 - distilled by Scout

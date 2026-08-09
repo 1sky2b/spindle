@@ -8,4 +8,4 @@ So what: crosses the charter's 2-week drift threshold. If the formal
 lead-time letter (due next week) confirms it, the Fab 2 wet-station order
 needs to move ~1 month earlier to hold the Q2 install date.
 
-Source: Teams, Fab2-planning channel, {{D:0}} 07:05 - distilled by Scout
+Source: Teams, Fab2-planning channel, {{D+0}} 07:05 - distilled by Scout

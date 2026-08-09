@@ -7,4 +7,4 @@ The formal notification letter arrived, confirming the verbal heads-up:
 - Standard 60-day notice clause satisfied - clock is running
 - No mention of LTA or volume programs (leaves the door open for our proposal)
 
-Source: mail, D. Whitfield (Lam), {{D:-1}} 15:02 - distilled by Scout, raw letter on the contracts SharePoint
+Source: mail, D. Whitfield (Lam), {{D-1}} 15:02 - distilled by Scout, raw letter on the contracts SharePoint

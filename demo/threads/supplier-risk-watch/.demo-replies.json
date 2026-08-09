@@ -2,7 +2,7 @@
   "replies": [
     {
       "match": "Reflection pass",
-      "text": "Reflection pass complete.\n\n**memory.md** - added: Screen lead-time drift signal ({{D:0}}, informal, 3-4 weeks past baseline; formal letter due next week); export-control review now lists coater/developer categories.\n\n**inbox/** - moved the Brooks Q2 item to inbox/read (watch-only, captured in memory for the monthly summary). Left the Screen and export-control items unprocessed - both have pending follow-ups.\n\nNo new skill; the sweep-triage pattern is already the Scout's job."
+      "text": "Reflection pass complete.\n\n**memory.md** - added: Screen lead-time drift signal ({{D+0}}, informal, 3-4 weeks past baseline; formal letter due next week); export-control review now lists coater/developer categories.\n\n**inbox/** - moved the Brooks Q2 item to inbox/read (watch-only, captured in memory for the monthly summary). Left the Screen and export-control items unprocessed - both have pending follow-ups.\n\nNo new skill; the sweep-triage pattern is already the Scout's job."
     }
   ],
   "default": "Checked memory.md and the inbox. Standing risk picture: the live item is the Screen lead-time drift (informal signal, formal letter due next week - if confirmed, the Fab 2 wet-station order moves ~1 month earlier). Export-control review is a slow burn affecting CD-100 spares licensing next year. Brooks stays watch-only.\n\nWant the monthly one-paragraph summary for the VP drafted from this, or is there a specific supplier you want dug into?"

@@ -1,5 +1,5 @@
 # CMP RFQ scorecard - Fab 2 (2 tools)
-Version {{D:-4}} - skeleton, awaiting bids (due {{D:10}})
+Version {{D-4}} - skeleton, awaiting bids (due {{D+10}})
 
 ### TCO buckets (7-year horizon, per tool)
 

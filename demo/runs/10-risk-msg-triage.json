@@ -1,6 +1,6 @@
 {
   "kind": "message", "agent": "thread", "thread": "supplier-risk-watch",
-  "startedAt": "{{ISO:-5h}}", "status": "done", "durationMs": 36200, "exitCode": 0,
+  "startedAt": "{{ISO-5h}}", "status": "done", "durationMs": 36200, "exitCode": 0,
   "promptChars": 268, "outputChars": 1040,
   "output": "Triaged the overnight sweep: Screen lead-time drift flagged for action (crosses charter threshold if the formal letter confirms), export-control review kept on watch with a cross-post to the TEL renewal thread, Brooks Q2 noted for the monthly summary."
 }

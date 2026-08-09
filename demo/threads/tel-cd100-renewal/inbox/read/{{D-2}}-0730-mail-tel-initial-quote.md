@@ -6,4 +6,4 @@ Opening renewal terms received from K. Sato:
 - Scope: 12 CD-100 tools, parts + labor as today
 - Buried change: response-time SLA table omits Sunday coverage (current contract includes it)
 
-Source: mail, K. Sato (TEL), {{D:-2}} 16:41 - distilled by Scout, raw thread in Outlook
+Source: mail, K. Sato (TEL), {{D-2}} 16:41 - distilled by Scout, raw thread in Outlook

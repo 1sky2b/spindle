@@ -1,6 +1,6 @@
 {
   "kind": "reflect", "agent": "Librarian", "thread": "tel-cd100-renewal",
-  "startedAt": "{{ISO:-23h}}", "status": "done", "durationMs": 24300, "exitCode": 0,
+  "startedAt": "{{ISO-23h}}", "status": "done", "durationMs": 24300, "exitCode": 0,
   "promptChars": 640, "outputChars": 520,
   "output": "Reflection pass: added 2 durable facts to memory.md (TEL opening position, Sunday-coverage flag). Wrote skills/negotiation-prep-brief.md from the session pattern - brief structure took two attempts, now captured. Moved 1 processed inbox item to inbox/read."
 }

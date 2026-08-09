@@ -1,6 +1,6 @@
 {
   "kind": "message", "agent": "thread", "thread": "tel-cd100-renewal",
-  "startedAt": "{{ISO:-24h}}", "status": "done", "durationMs": 58600, "exitCode": 0,
+  "startedAt": "{{ISO-24h}}", "status": "done", "durationMs": 58600, "exitCode": 0,
   "promptChars": 388, "outputChars": 1490,
   "output": "Drafted the negotiation brief per the prep-brief skill: counter at 3.0%, SLA miss as lead lever (96.1% actual vs 97.5% contracted), Lam 2.4% benchmark, 3-year term as sweetener. Delegated the uptime-data pull to a subagent; reconciled before saving. Produced the navy/gold one-pager HTML for the VP review. Walk-away set at 3.5%."
 }

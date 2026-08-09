@@ -1,6 +1,6 @@
 {
   "kind": "message", "agent": "thread", "thread": "lam-spares-pricing",
-  "startedAt": "{{ISO:-50h}}", "status": "done", "durationMs": 47100, "exitCode": 0,
+  "startedAt": "{{ISO-50h}}", "status": "done", "durationMs": 47100, "exitCode": 0,
   "promptChars": 296, "outputChars": 1310,
   "output": "Pulled trailing-12-month spares spend from the Ariba cube: $860k exposure, top 10 parts = 71% of spend. Saved the price-deltas CSV to artifacts. Recommended a 3-year LTA on the top-10 basket at +2% - blended effective increase ~3.4% vs the announced 7%."
 }

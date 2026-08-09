@@ -1,6 +1,6 @@
 {
   "kind": "message", "agent": "thread", "thread": "lam-spares-pricing",
-  "startedAt": "{{ISO:-28h}}", "status": "failed", "durationMs": 600000, "exitCode": null,
+  "startedAt": "{{ISO-28h}}", "status": "failed", "durationMs": 600000, "exitCode": null,
   "error": "Engine timed out after 600s",
   "promptChars": 301, "outputChars": 0,
   "output": ""

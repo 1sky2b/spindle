@@ -1,10 +1,10 @@
 # Session log - Supplier risk watch
 
-## You - {{TS:-6h}}
+## You - {{TS-6h}}
 
 Anything in the overnight sweep I should act on before the staff meeting?
 
-## Agent - {{TS:-5h}}
+## Agent - {{TS-5h}}
 
 Three items in the inbox from this morning's sweep; one is worth thirty seconds before your meeting:
 

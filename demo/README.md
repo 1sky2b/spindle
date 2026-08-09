@@ -11,13 +11,19 @@ Fixtures stay readable markdown; freshness comes from tokens expanded at seed
 time (in file contents AND file names). Offsets are relative to "now", units
 `m`/`h`/`d`:
 
-- `{{TS:-26h}}` -> `2026-08-08 07:31:12` (session-log stamp format)
-- `{{ISO:-45m}}` -> `2026-08-09T08:46:12.000Z` (run `startedAt`)
-- `{{D:-1}}` -> `2026-08-08` (date only; safe in filenames; a bare number means days)
+- `{{TS-26h}}` -> `2026-08-08 07:31:12` (session-log stamp format)
+- `{{ISO-45m}}` -> `2026-08-09T08:46:12.000Z` (run `startedAt`)
+- `{{D-1}}` -> `2026-08-08` (date only; a bare number means days)
+
+The sign is **required** — write `{{D+0}}` for today, not `{{D:0}}` or `{{D0}}`.
+These tokens appear in filenames, and Windows forbids `:` in a path: a fixture
+named `{{D:0}}-...md` makes `git clone` fail on Windows with "invalid path" and
+leaves the working tree empty. Keep filename tokens to `{{D...}}`; the `/`, `\`,
+`:`, `*`, `?`, `"`, `<`, `>` and `|` characters must never appear in a filename.
 
 ## Authoring rules (the UI depends on these)
 
-1. **Session logs** (`sessions/log.md`): blocks are `## Who - {{TS:...}}` with a
+1. **Session logs** (`sessions/log.md`): blocks are `## Who - {{TS...}}` with a
    blank line before the body. The chat parser splits on lines starting with
    `## `, so **no body text may start a line with `## `** — use `###` or bullets
    inside agent replies. Keep each log well under 40k chars.

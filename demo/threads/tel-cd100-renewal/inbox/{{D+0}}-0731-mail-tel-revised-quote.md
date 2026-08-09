@@ -9,4 +9,4 @@ Kenji Sato sent a revised term sheet this morning:
 
 Year-1 cost at 4.1%: ~$1.478M - roughly $10k above the approved ceiling.
 
-Source: mail, K. Sato (TEL), {{D:0}} 07:14 - distilled by Scout, raw thread in Outlook
+Source: mail, K. Sato (TEL), {{D+0}} 07:14 - distilled by Scout, raw thread in Outlook

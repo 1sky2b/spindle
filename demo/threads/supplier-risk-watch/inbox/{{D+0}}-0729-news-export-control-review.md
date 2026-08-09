@@ -9,4 +9,4 @@ CD-100 fleet could require licenses from next year. The TEL renewal thread
 has been cross-notified - license lead times may belong in the service
 contract terms.
 
-Source: Risk-Watch Teams channel + trade press, {{D:0}} 06:58 - distilled by Scout
+Source: Risk-Watch Teams channel + trade press, {{D+0}} 06:58 - distilled by Scout

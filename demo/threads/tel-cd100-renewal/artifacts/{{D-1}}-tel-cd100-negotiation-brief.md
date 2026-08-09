@@ -1,5 +1,5 @@
 # Negotiation brief - TEL CD-100 service renewal
-Prepared {{D:-1}} for the Thursday category review
+Prepared {{D-1}} for the Thursday category review
 
 ### Recommendation
 Counter at **3.0% annual escalation, 3-year term**, Sunday coverage restored,
