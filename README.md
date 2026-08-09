@@ -100,15 +100,35 @@ spindle/
   docs/              architecture, decisions (ADRs), extending, troubleshooting
 ```
 
-## First hour checklist
+## Making it yours (first-run wizard)
 
-1. Fill in `global/routing.md` with your real go-to sources - this is the
-   highest-leverage file in the harness.
-2. Fill in `global/acronyms.md`.
-3. Create threads for your top 3-5 active topics; give each a real charter
-   (Purpose / Expectations / Be proactive when / Escalate when).
-4. Wire opencode (above), send each thread one real task.
-5. Set `scheduler.collectorTime` to when you want the morning sweep.
+On a normal start, a fresh install opens a short first-run wizard in place of
+the empty thread list. It captures the two things nothing can infer - who you
+are (`global/memory.md`) and where your information lives (`global/routing.md`) -
+and names your first thread, writing the real files for you. It's engine-free,
+so it works from a cold install; it marks itself done via `global/.onboarded`
+and won't nag you again. To run it again, delete that marker and restart.
+
+Full walkthrough - including the agent-backed steps that suggest routing
+entries and draft a thread from a real task once the engine is live - is in
+**`docs/onboarding.md`**. After the wizard, fill in `global/acronyms.md`,
+create threads for your other active topics, and set `scheduler.collectorTime`
+to when you want the morning Scout sweep.
+
+## Setup & readiness check
+
+Spindle starts in mock mode; going live needs a real opencode plus a consented
+Graph MCP. To see how far along that path you are, run the readiness check:
+
+```
+node server.js --check
+```
+
+It reports in stages - opencode present, then the engine actually runs, then
+each Graph capability (mail / calendar / files / teams) verified with a single
+read-only call (reachable is not the same as authorized). A health badge in the
+sidebar shows the same status. See `docs/onboarding.md` for what each stage
+means and how to fix a red one.
 
 ## A note on data hygiene
 
@@ -126,6 +146,7 @@ to change.
 
 ## Docs
 
+- `docs/onboarding.md` - the demo -> wizard -> readiness check -> first task arc
 - `docs/architecture.md` - how the pieces fit, request flows, data model
 - `docs/decisions.md` - every design decision and why (ADR style)
 - `docs/extending.md` - recipes: new agents, Task Scheduler, new preview types

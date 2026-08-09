@@ -196,3 +196,86 @@ body.demo{overflow:hidden;}
 body.demo #app{height:calc(100vh - 42px);}
 .demo-highlight{outline:2px solid var(--sb-accent) !important; outline-offset:2px;
   box-shadow:0 0 0 5px rgba(232,180,76,.22); border-radius:8px; transition:box-shadow .3s;}
+
+/* ================= readiness (doctor) badge — sidebar, dark tokens ========= */
+#health-badge{padding:0 12px 6px;}
+.hb-summary{width:100%; display:flex; align-items:center; gap:8px; padding:6px 9px;
+  background:var(--sb-elem); border:1px solid var(--sb-line); border-radius:7px;
+  color:var(--sb-text); font-size:12px;}
+.hb-summary:hover{border-color:var(--sb-accent);}
+.hb-dot{width:8px; height:8px; border-radius:50%; flex:0 0 auto; background:var(--sb-mut);}
+.hb-summary.ok .hb-dot{background:var(--ok);}
+.hb-summary.warn .hb-dot{background:var(--sb-accent);}
+.hb-summary.bad .hb-dot{background:var(--bad);}
+.hb-label{flex:1; text-align:left;}
+.hb-caret{color:var(--sb-mut); font-size:11px;}
+.hb-details{margin-top:5px; background:var(--sb-elem); border:1px solid var(--sb-line);
+  border-radius:7px; padding:7px 9px;}
+.hb-item{display:flex; align-items:flex-start; gap:7px; font-size:11.5px; padding:3px 0; color:var(--sb-text);}
+.hb-idot{width:7px; height:7px; border-radius:50%; margin-top:4px; flex:0 0 auto; background:var(--sb-mut);}
+.hb-item.ok .hb-idot{background:var(--ok);}
+.hb-item.warn .hb-idot{background:var(--sb-accent);}
+.hb-item.bad .hb-idot{background:var(--bad);}
+.hb-name{font-weight:600; flex:0 0 60px;}
+.hb-msg{flex:1; color:var(--sb-mut);}
+.hb-foot{display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-top:6px; padding-top:6px; border-top:1px solid var(--sb-line);}
+.hb-when{font-size:10.5px; color:var(--sb-mut);}
+.hb-recheck{padding:3px 9px; border-radius:6px; border:1px solid var(--sb-line);
+  background:none; color:var(--sb-text); font-size:11px;}
+.hb-recheck:hover{border-color:var(--sb-accent); color:var(--sb-accent);}
+.hb-recheck:disabled{opacity:.6; cursor:default;}
+
+/* ================= first-run wizard — main pane, light tokens ============== */
+.onb-wizard{width:min(560px, 92%); max-height:100%; overflow-y:auto; padding:8px 0;}
+.onb-card{background:var(--card); border:1px solid var(--line); border-radius:14px;
+  padding:24px 26px; box-shadow:0 10px 34px rgba(20,27,69,.10);}
+.onb-steps{display:flex; gap:6px; margin-bottom:16px;}
+.onb-steps .dot{flex:1; height:4px; border-radius:2px; background:var(--line);}
+.onb-steps .dot.on{background:var(--gold);}
+.onb-kicker{font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--gold);
+  font-weight:700; margin-bottom:6px;}
+.onb-card h2{font-family:var(--disp); color:var(--ink); font-size:22px; margin-bottom:8px;}
+.onb-lead{color:var(--mut); line-height:1.5; margin-bottom:16px; font-size:13px;}
+.onb-row{display:flex; gap:8px; margin-bottom:9px; align-items:center;}
+.onb-input, .onb-card textarea{flex:1; width:100%; padding:9px 11px; border:1px solid var(--line);
+  border-radius:8px; font-family:var(--body); font-size:13.5px; background:var(--elem);
+  color:var(--text); outline:none;}
+.onb-card textarea{display:block; resize:vertical;}
+.onb-input:focus, .onb-card textarea:focus{border-color:var(--ink);}
+.onb-x{flex:0 0 auto; width:32px; height:36px; border:1px solid var(--line); border-radius:8px;
+  background:var(--card); color:var(--mut); font-size:17px; line-height:1;}
+.onb-x:hover{border-color:var(--bad); color:var(--bad);}
+.onb-arrow{flex:0 0 auto; color:var(--mut); font-size:14px;}
+.onb-add{margin:2px 0 4px; background:none; border:1px dashed var(--line-strong); border-radius:8px;
+  padding:7px 12px; color:var(--ink); font-size:12.5px;}
+.onb-add:hover{border-color:var(--gold); color:var(--gold);}
+.onb-field-label{font-size:12px; font-weight:600; color:var(--mut); margin:10px 0 4px;}
+.onb-hint{font-size:11.5px; color:var(--mut); margin-top:6px; line-height:1.45;}
+.onb-err{color:var(--bad); font-size:12px; margin-top:8px; min-height:1em;}
+.onb-nav{display:flex; align-items:center; gap:9px; margin-top:18px;}
+.onb-nav .spacer{flex:1;}
+.onb-btn{padding:9px 18px; border-radius:8px; border:1px solid var(--line); background:var(--card);
+  color:var(--text); font-size:13px;}
+.onb-btn:hover{border-color:var(--gold); color:var(--gold);}
+.onb-btn.primary{background:var(--ink); border-color:var(--ink); color:var(--on-ink); font-weight:600;}
+.onb-btn.primary:hover{background:var(--ink-2); color:var(--on-ink);}
+.onb-btn:disabled{opacity:.5; cursor:default;}
+.onb-btn.primary:disabled:hover{background:var(--ink); color:var(--on-ink);}
+
+/* finish step: readiness + enrichment */
+.onb-ready{margin-top:6px; border:1px solid var(--line); border-radius:10px; padding:12px 14px; background:var(--elem);}
+.onb-ready h3, .onb-enrich h3{font-family:var(--disp); font-size:14px; color:var(--ink); margin-bottom:8px;}
+.onb-ritem{display:flex; align-items:flex-start; gap:8px; font-size:12px; padding:3px 0;}
+.onb-ridot{width:8px; height:8px; border-radius:50%; margin-top:4px; flex:0 0 auto; background:var(--mut);}
+.onb-ritem.ok .onb-ridot{background:var(--ok);}
+.onb-ritem.warn .onb-ridot{background:var(--gold);}
+.onb-ritem.bad .onb-ridot{background:var(--bad);}
+.onb-rname{font-weight:600; color:var(--ink); flex:0 0 64px;}
+.onb-rmsg{flex:1; color:var(--mut);}
+.onb-ready-foot{margin-top:8px;}
+.onb-enrich{margin-top:16px;}
+.onb-action{border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:10px;}
+.onb-action.disabled{opacity:.65;}
+.onb-suggest-row{display:flex; gap:7px; align-items:center; margin-bottom:7px;}
+.onb-suggest-row input[type=checkbox]{width:16px; height:16px; flex:0 0 auto; accent-color:var(--gold);}

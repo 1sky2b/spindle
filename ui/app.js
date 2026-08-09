@@ -11,12 +11,120 @@ async function loadState() {
   const r = await fetch("/api/state").then((x) => x.json());
   state.threads = r.threads;
   state.demo = !!r.demo;
+  state.firstRun = !!r.firstRun;
+  state.doctor = r.doctor || null;
   $("engine-badge").textContent = "engine: " + r.engineMode + (r.demo ? " · demo" : "");
   $("sched-note").textContent = r.scheduler && r.scheduler.enabled
     ? "Scout scheduled daily at " + (r.scheduler.collectorTime || "07:30")
     : "Scheduler off (config.json)";
   renderThreads();
+  renderHealthBadge();
 }
+
+/* ---------------- readiness (doctor) badge ---------------- */
+/* state.doctor is the compact /api/state summary (string statuses); the
+   /api/doctor?refresh=1 response is the fuller {status,message,version} form.
+   Every reader normalizes through dstat()/dmsg() so both shapes render. */
+
+function dstat(x) { return typeof x === "string" ? x : (x && x.status) || "unknown"; }
+function dmsg(x) { return (x && typeof x === "object" && x.message) || ""; }
+
+function doctorStatusClass(s) {
+  if (s === "ok") return "ok";
+  if (s === "fail" || s === "missing") return "bad";
+  return "warn"; // mock, skip, unknown, null
+}
+
+function doctorDefaultCopy(key, status) {
+  const copy = {
+    opencode: { ok: "installed", missing: "not found - install opencode to go live", unknown: "presence unknown" },
+    engine: { ok: "live", mock: "engine is mock - set engine.mode to opencode in config.json", fail: "failed to run - check engine.command", unknown: "status unknown" },
+    _mcp: { ok: "reachable", fail: "call failed - check auth / scopes", skip: "skipped - engine not live", unknown: "not checked" },
+  };
+  const t = copy[key] || copy._mcp;
+  return t[status] || status;
+}
+
+function doctorItems(d) {
+  if (!d) return [];
+  const mcp = d.mcp || {};
+  const raw = [
+    ["opencode", "opencode", d.opencode],
+    ["engine", "engine", d.engine],
+    ["mail", "mail", mcp.mail],
+    ["calendar", "calendar", mcp.calendar],
+    ["files", "files", mcp.files],
+    ["teams", "teams", mcp.teams],
+  ];
+  return raw.map(([key, label, v]) => {
+    const status = dstat(v);
+    const version = (v && typeof v === "object" && v.version) || null;
+    let message = dmsg(v) || doctorDefaultCopy(key, status);
+    if (version && key === "opencode") message += " (" + version + ")";
+    return { key, label, status, message };
+  });
+}
+
+function doctorEngineLive(d) { return !!d && dstat(d.engine) === "ok"; }
+
+let healthOpen = false;
+function renderHealthBadge() {
+  const el = $("health-badge");
+  if (!el) return;
+  const d = state.doctor;
+  if (!d) { el.classList.add("hidden"); el.innerHTML = ""; return; }
+  el.classList.remove("hidden");
+  el.innerHTML = "";
+  const items = doctorItems(d);
+  const hasBad = items.some((i) => doctorStatusClass(i.status) === "bad");
+  const hasWarn = items.some((i) => doctorStatusClass(i.status) === "warn");
+  const overall = hasBad ? "bad" : hasWarn ? "warn" : "ok";
+  const label = overall === "ok" ? "Setup ready" : overall === "bad" ? "Setup needs attention" : "Setup: check items";
+
+  const btn = document.createElement("button");
+  btn.className = "hb-summary " + overall;
+  btn.innerHTML = `<span class="hb-dot"></span><span class="hb-label"></span><span class="hb-caret">${healthOpen ? "▾" : "▸"}</span>`;
+  btn.querySelector(".hb-label").textContent = label;
+  btn.addEventListener("click", () => { healthOpen = !healthOpen; renderHealthBadge(); });
+  el.appendChild(btn);
+
+  if (!healthOpen) return;
+  const det = document.createElement("div");
+  det.className = "hb-details";
+  for (const it of items) {
+    const row = document.createElement("div");
+    row.className = "hb-item " + doctorStatusClass(it.status);
+    row.innerHTML = `<span class="hb-idot"></span><span class="hb-name"></span><span class="hb-msg"></span>`;
+    row.querySelector(".hb-name").textContent = it.label;
+    row.querySelector(".hb-msg").textContent = it.message;
+    det.appendChild(row);
+  }
+  const foot = document.createElement("div");
+  foot.className = "hb-foot";
+  foot.innerHTML = `<span class="hb-when"></span><button class="hb-recheck">Re-check</button>`;
+  foot.querySelector(".hb-when").textContent = d.checkedAt
+    ? "checked " + String(d.checkedAt).replace("T", " ").slice(0, 16)
+    : "not checked yet";
+  foot.querySelector(".hb-recheck").addEventListener("click", recheckDoctor);
+  det.appendChild(foot);
+  el.appendChild(det);
+}
+
+async function recheckDoctor() {
+  const btn = $("health-badge") && $("health-badge").querySelector(".hb-recheck");
+  if (btn) { btn.disabled = true; btn.textContent = "Checking…"; }
+  try {
+    const r = await fetch("/api/doctor?refresh=1").then((x) => x.json());
+    state.doctor = r || state.doctor;
+    renderHealthBadge();
+    document.dispatchEvent(new CustomEvent("spindle:doctor", { detail: state.doctor }));
+  } catch (e) {
+    if (btn) { btn.disabled = false; btn.textContent = "Re-check"; }
+  }
+}
+
+// Shared with ui/onboarding.js (finish-step readiness + enrichment gating).
+window.spindleDoctor = { items: doctorItems, engineLive: doctorEngineLive, recheck: recheckDoctor, statusClass: doctorStatusClass };
 
 function renderThreads() {
   const list = $("thread-list");

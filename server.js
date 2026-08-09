@@ -21,6 +21,7 @@ const crypto = require("crypto");
 const url = require("url");
 const engine = require("./lib/engine");
 const agentsmd = require("./lib/agentsmd");
+const doctor = require("./lib/doctor");
 
 const ROOT = __dirname;
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
@@ -280,6 +281,117 @@ function composeReflectPrompt(threadName) {
   );
 }
 
+/* ---------------- onboarding + readiness helpers ---------------- */
+
+/** True on a fresh, non-demo install: the wizard's marker is absent. Demo data
+ *  never onboards regardless of any marker, so the wizard can't show there. */
+function isFirstRun() {
+  return !DEMO && !fs.existsSync(path.join(DATA, "global", ".onboarded"));
+}
+
+/** Compact doctor summary from cache only (never runs the slow probe here). */
+function doctorSummary() {
+  try {
+    const cached = doctor.cached(DATA);
+    return cached ? doctor.summary(cached) : null;
+  } catch (_) { return null; }
+}
+
+/** Working dir for onboarding engine runs: the getting-started thread if it
+ *  exists, else the most recent real thread, else the data root as a fallback. */
+function onboardingCwd() {
+  const gs = path.join(THREADS, "getting-started");
+  if (fs.existsSync(gs)) return gs;
+  const list = listThreads();
+  return list.length ? path.join(THREADS, list[0].name) : DATA;
+}
+
+/** Pull the last single-line JSON object out of engine output; null if none.
+ *  The engine contract is one JSON line, so we fail closed on anything else. */
+function parseJsonLine(text) {
+  if (!text) return null;
+  const lines = String(text).split("\n");
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const s = lines[i].trim();
+    if (s.startsWith("{") && s.endsWith("}")) {
+      try { return JSON.parse(s); } catch (_) {}
+    }
+  }
+  return null;
+}
+
+function routingSuggestPrompt() {
+  return (
+    "Onboarding: propose routing entries only - do NOT write any files.\n" +
+    "Read a SMALL sample (a handful, read-only) of recent mail and Teams messages via the Graph MCP. " +
+    "Infer where recurring topics live (SharePoint sites, Teams channels/bots, systems of record). " +
+    "Return ONE line of JSON and nothing else, of the form:\n" +
+    '{"suggestions":[{"topic":"...","location":"..."}]}\n' +
+    "Keep it to at most 6 high-confidence entries. If you cannot read anything, return " +
+    '{"suggestions":[]}.'
+  );
+}
+
+function draftThreadPrompt(task) {
+  return (
+    "Onboarding: draft a thread charter from the user's task - do NOT create anything.\n" +
+    `The task: ${task}\n\n` +
+    "Produce a short title, a one-sentence purpose, and a full charter (Purpose / Expectations / " +
+    "Be proactive when / Escalate to me when sections as markdown). " +
+    "Return ONE line of JSON and nothing else, of the form:\n" +
+    '{"title":"...","purpose":"...","charter":"# ...\\n\\n## Purpose\\n..."}'
+  );
+}
+
+/** Reasonable template-derived draft used in mock mode or on any parse failure. */
+function draftFallback(task) {
+  const title = task.length > 48 ? task.slice(0, 45).trim() + "..." : task;
+  const charter =
+    `# ${title}\n\n## Purpose\n${task}\n\n` +
+    "## Expectations\n- (what good output looks like; cadence; format preferences)\n\n" +
+    "## Be proactive when\n- (conditions under which the agent should act or flag without being asked)\n\n" +
+    "## Escalate to me when\n- (what must never be decided autonomously)\n";
+  return { title, purpose: task, charter };
+}
+
+/** Write global/memory.md from the persona facts the user typed (literal). */
+function writeGlobalMemory(persona) {
+  const facts = (Array.isArray(persona) ? persona : [])
+    .map((s) => String(s).trim()).filter(Boolean);
+  const body =
+    "# Global memory\n\n" +
+    "Durable facts about the user and their world that apply across ALL threads.\n" +
+    "One line per fact. Distilled - never raw email/message content.\n\n" +
+    (facts.map((f) => `- ${f}`).join("\n") || "- (add durable facts as they emerge)") + "\n";
+  fs.writeFileSync(path.join(DATA, "global", "memory.md"), body);
+}
+
+/** Format routing entries as `topic -> location` markdown list lines. */
+function routingLines(entries) {
+  return (Array.isArray(entries) ? entries : [])
+    .filter((e) => e && e.topic && e.location)
+    .map((e) => `- ${String(e.topic).trim()} -> ${String(e.location).trim()}`);
+}
+
+/** Print a readable staged readiness report for the `--check` CLI path. */
+function printDoctorReport(status) {
+  status = status || {};
+  const row = (label, s, extra) =>
+    console.log(`  ${label.padEnd(14)} ${s || "unknown"}${extra ? "  (" + extra + ")" : ""}`);
+  console.log("\nSpindle readiness check\n");
+  const oc = status.opencode || {};
+  row("opencode", oc.status, oc.version || oc.message || "");
+  const en = status.engine || {};
+  row("engine", en.status, en.message || "");
+  console.log("  MCP:");
+  const mcp = status.mcp || {};
+  for (const cap of ["mail", "calendar", "files", "teams"]) {
+    const c = mcp[cap] || {};
+    row("  " + cap, c.status, c.message || "");
+  }
+  console.log(`\n  checked: ${status.checkedAt || "(never)"}\n`);
+}
+
 /* ---------------- HTTP routing ---------------- */
 
 const server = http.createServer(async (req, res) => {
@@ -320,6 +432,8 @@ const server = http.createServer(async (req, res) => {
         engineMode: (CONFIG.engine || {}).mode || "mock",
         scheduler: CONFIG.scheduler || {},
         demo: DEMO,
+        firstRun: isFirstRun(),
+        doctor: doctorSummary(), // cache-only; the full probe never runs here
         roster,
       });
     }
@@ -329,6 +443,96 @@ const server = http.createServer(async (req, res) => {
       if (!body.title && !body.name) return bad(res, "title required");
       const slug = createThread(body.name, body.title, body.purpose);
       return send(res, 200, { ok: true, name: slug });
+    }
+
+    /* ---- onboarding (first-run wizard + agent-backed enrichment) ---- */
+
+    // Scripted wizard finish: write the two files nothing can infer, create the
+    // first thread, then drop the marker so the wizard never nags again. All
+    // values are literal user input - no engine involved.
+    if (p === "/api/onboarding/complete" && req.method === "POST") {
+      const body = await readBody(req);
+      const ft = body.firstThread || {};
+      if (!ft.title || !ft.title.trim()) return bad(res, "firstThread.title required");
+      fs.mkdirSync(path.join(DATA, "global"), { recursive: true });
+      writeGlobalMemory(body.persona);
+      const route =
+        "# Go-to routing map\n\n" +
+        "The agent consults this BEFORE asking where information lives. Keep it current.\n" +
+        "Format: `topic -> where to look (and how)`\n\n" +
+        (routingLines(body.routing).join("\n") || "- (add routes as you discover them)") + "\n";
+      fs.writeFileSync(path.join(DATA, "global", "routing.md"), route);
+      const slug = createThread(ft.title, ft.title, ft.purpose);
+      fs.writeFileSync(path.join(DATA, "global", ".onboarded"), nowStamp() + "\n");
+      return send(res, 200, { ok: true, name: slug });
+    }
+
+    // Propose routing entries from a small MCP read. Never writes; fails closed
+    // to [] in mock/demo or on any engine/parse failure.
+    if (p === "/api/onboarding/suggest-routing" && req.method === "POST") {
+      await readBody(req);
+      if (DEMO || (CONFIG.engine || {}).mode === "mock") return send(res, 200, { suggestions: [] });
+      try {
+        const result = await engine.run({ cwd: onboardingCwd(), prompt: routingSuggestPrompt(), config: CONFIG, onData: null });
+        const obj = parseJsonLine(result.output);
+        const suggestions = obj && Array.isArray(obj.suggestions)
+          ? obj.suggestions.filter((s) => s && s.topic && s.location)
+              .map((s) => ({ topic: String(s.topic), location: String(s.location) }))
+          : [];
+        return send(res, 200, { suggestions });
+      } catch (_) {
+        return send(res, 200, { suggestions: [] });
+      }
+    }
+
+    // Append user-ratified routing lines to global/routing.md.
+    if (p === "/api/onboarding/apply-routing" && req.method === "POST") {
+      const body = await readBody(req);
+      const lines = routingLines(body.entries);
+      if (lines.length) {
+        const f = path.join(DATA, "global", "routing.md");
+        fs.mkdirSync(path.dirname(f), { recursive: true });
+        fs.appendFileSync(f, "\n" + lines.join("\n") + "\n");
+      }
+      return send(res, 200, { ok: true });
+    }
+
+    // Draft (propose only) a charter from a one-line task. Never creates a
+    // thread - the UI calls POST /api/threads to confirm. Falls back to a
+    // template draft in mock mode or on any parse failure.
+    if (p === "/api/onboarding/draft-thread" && req.method === "POST") {
+      const body = await readBody(req);
+      const task = (body.task || "").trim();
+      if (!task) return bad(res, "task required");
+      const fallback = draftFallback(task);
+      if (DEMO || (CONFIG.engine || {}).mode === "mock") return send(res, 200, fallback);
+      try {
+        const result = await engine.run({ cwd: onboardingCwd(), prompt: draftThreadPrompt(task), config: CONFIG, onData: null });
+        const obj = parseJsonLine(result.output);
+        if (obj && obj.charter) {
+          return send(res, 200, {
+            title: String(obj.title || fallback.title),
+            purpose: String(obj.purpose || fallback.purpose),
+            charter: String(obj.charter),
+          });
+        }
+      } catch (_) {}
+      return send(res, 200, fallback);
+    }
+
+    // Staged readiness check. Cache-fresh reads return instantly; ?refresh=1
+    // (or a stale/empty cache) triggers a full re-probe.
+    if (p === "/api/doctor" && req.method === "GET") {
+      const refresh = parsed.query.refresh === "1" || parsed.query.refresh === "true";
+      if (!refresh) {
+        const cached = doctor.cached(DATA);
+        const ttl = (CONFIG.doctor || {}).cacheTtlMs || 3600000;
+        if (cached && cached.checkedAt && Date.now() - new Date(cached.checkedAt).getTime() < ttl) {
+          return send(res, 200, cached);
+        }
+      }
+      const status = await doctor.run({ root: DATA, config: CONFIG, refresh });
+      return send(res, 200, status);
     }
 
     const mThread = p.match(/^\/api\/thread\/([a-z0-9-]+)\/([a-z-]+)$/);
@@ -435,14 +639,28 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`\nSpindle running -> http://localhost:${PORT}`);
-  if (DEMO) {
-    console.log(`DEMO MODE: sample data copied to ${DATA}`);
-    console.log(`Your real threads/ are untouched; the demo resets on restart.\n`);
-  } else {
-    console.log(`Engine mode: ${(CONFIG.engine || {}).mode || "mock"} ` +
-      `(edit config.json to switch between "mock" and "opencode")\n`);
-  }
-  startScheduler();
-});
+// `node server.js --check`: run the readiness stages, print a staged report,
+// and exit without ever starting the HTTP server.
+if (process.argv.includes("--check")) {
+  (async () => {
+    try {
+      const status = await doctor.run({ root: DATA, config: CONFIG, refresh: true });
+      printDoctorReport(status);
+    } catch (e) {
+      console.error("[spindle] readiness check failed:", e.message);
+    }
+    process.exit(0);
+  })();
+} else {
+  server.listen(PORT, "127.0.0.1", () => {
+    console.log(`\nSpindle running -> http://localhost:${PORT}`);
+    if (DEMO) {
+      console.log(`DEMO MODE: sample data copied to ${DATA}`);
+      console.log(`Your real threads/ are untouched; the demo resets on restart.\n`);
+    } else {
+      console.log(`Engine mode: ${(CONFIG.engine || {}).mode || "mock"} ` +
+        `(edit config.json to switch between "mock" and "opencode")\n`);
+    }
+    startScheduler();
+  });
+}
