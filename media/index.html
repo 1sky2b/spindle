@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spindle — First-run onboarding</title>
+<style>html,body{margin:0;padding:0;}</style>
+</head>
+<body>
+<style>
+  /* Spindle showcase — grounded in the app's own navy/gold "document identity"
+     and its signature gold thread-strand. Serif display (Cambria, as the app
+     uses), system sans for body, mono for the utility line. */
+  :root{
+    --paper:#EEF1F8; --card:#FFFFFF; --ink:#1E2761; --ink-2:#26326F;
+    --gold:#B9831B; --gold-bright:#E8B44C; --text:#232838; --mut:#5A6478;
+    --line:#D8DFEE; --line-soft:#E7ECF6; --shadow:rgba(20,27,69,.16);
+    --serif:"Cambria",Georgia,"Times New Roman",serif;
+    --sans:system-ui,"Segoe UI",Calibri,Arial,sans-serif;
+    --mono:ui-monospace,Consolas,"SF Mono",Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0F1526; --card:#1A2340; --ink:#EAD79B; --ink-2:#E8B44C;
+      --gold:#E8B44C; --gold-bright:#F1C86B; --text:#E7ECFA; --mut:#9DAAD0;
+      --line:#293357; --line-soft:#202a4a; --shadow:rgba(0,0,0,.45);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#EEF1F8; --card:#FFFFFF; --ink:#1E2761; --ink-2:#26326F;
+    --gold:#B9831B; --gold-bright:#E8B44C; --text:#232838; --mut:#5A6478;
+    --line:#D8DFEE; --line-soft:#E7ECF6; --shadow:rgba(20,27,69,.16);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0F1526; --card:#1A2340; --ink:#EAD79B; --ink-2:#E8B44C;
+    --gold:#E8B44C; --gold-bright:#F1C86B; --text:#E7ECFA; --mut:#9DAAD0;
+    --line:#293357; --line-soft:#202a4a; --shadow:rgba(0,0,0,.45);
+  }
+
+  *{box-sizing:border-box;}
+  .sp-page{
+    background:
+      radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, var(--gold-bright) 8%, var(--paper)) 0%, var(--paper) 55%);
+    color:var(--text); font-family:var(--sans);
+    min-height:100vh; padding:clamp(28px,6vw,72px) 20px 56px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sp-wrap{max-width:1080px; margin:0 auto; display:flex; flex-direction:column; gap:clamp(32px,5vw,56px);}
+
+  /* ---- intro ---- */
+  .sp-intro{max-width:64ch; display:flex; flex-direction:column; gap:14px;}
+  .sp-eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--gold); display:flex; align-items:center; gap:10px;
+  }
+  .sp-eyebrow::before{content:""; width:26px; height:3px; background:var(--gold-bright); border-radius:2px;}
+  .sp-title{
+    font-family:var(--serif); font-weight:700; color:var(--ink);
+    font-size:clamp(30px,5.4vw,52px); line-height:1.04; letter-spacing:-.01em;
+    text-wrap:balance; margin:0;
+  }
+  .sp-lede{font-size:clamp(16px,2.1vw,19px); line-height:1.55; color:var(--mut); max-width:60ch; margin:0;}
+  .sp-lede b{color:var(--text); font-weight:600;}
+
+  /* ---- demo frame: the app screen, topped by the gold thread-strand ---- */
+  .sp-demo{margin:0; display:flex; flex-direction:column; gap:14px;}
+  .sp-frame{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    box-shadow:0 24px 60px -22px var(--shadow); overflow:hidden;
+    animation:sp-rise .7s cubic-bezier(.2,.7,.2,1) both;
+  }
+  .sp-strand{height:4px; background:linear-gradient(90deg,var(--gold),var(--gold-bright));}
+  .sp-frame img,.sp-frame video{display:block; width:100%; height:auto;}
+  .sp-cap{
+    font-family:var(--mono); font-size:12.5px; color:var(--mut);
+    display:flex; align-items:center; gap:10px; padding-left:2px;
+  }
+  .sp-cap .dot{width:7px; height:7px; border-radius:50%; background:var(--gold-bright); flex:0 0 auto;}
+
+  /* ---- the three layers (a real progression: setup → check → enrich) ---- */
+  .sp-steps{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+  }
+  .sp-step{background:var(--card); padding:22px 22px 24px; display:flex; flex-direction:column; gap:9px; position:relative;}
+  .sp-step::before{content:""; position:absolute; left:0; top:22px; bottom:22px; width:3px; background:var(--gold-bright); border-radius:0 2px 2px 0; opacity:.85;}
+  .sp-step .lab{font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold);}
+  .sp-step h2{font-family:var(--serif); font-size:19px; color:var(--ink); margin:0; font-weight:700;}
+  .sp-step p{font-size:14px; line-height:1.55; color:var(--mut); margin:0;}
+  .sp-step p code{font-family:var(--mono); font-size:12.5px; color:var(--text); background:var(--line-soft); padding:1px 5px; border-radius:5px;}
+
+  /* ---- footer ---- */
+  .sp-foot{
+    border-top:1px solid var(--line); padding-top:20px; display:flex; flex-wrap:wrap; gap:8px 22px;
+    align-items:baseline; font-size:13.5px; color:var(--mut); max-width:74ch;
+  }
+  .sp-foot b{color:var(--text); font-weight:600;}
+  .sp-foot .tag{font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:var(--gold);}
+
+  @media (max-width:720px){ .sp-steps{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion:reduce){ .sp-frame{animation:none;} }
+  @keyframes sp-rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;}}
+</style>
+
+<div class="sp-page">
+  <div class="sp-wrap">
+
+    <header class="sp-intro">
+      <div class="sp-eyebrow">Spindle · first-run onboarding</div>
+      <h1 class="sp-title">From an empty install to yours, in one pass</h1>
+      <p class="sp-lede">A fresh Spindle opens a guided setup that captures the two things nothing can infer — <b>who you are</b> and <b>where your information lives</b> — then names your first thread and writes the real files for you. No engine required to start.</p>
+    </header>
+
+    <figure class="sp-demo">
+      <div class="sp-frame">
+        <div class="sp-strand"></div>
+        <video autoplay muted loop playsinline preload="auto" poster="poster.jpg" aria-label="Screen recording of Spindle's first-run onboarding wizard: entering role and routing facts, naming a first thread, then the finished workspace with the engine-readiness badge.">
+          <source src="spindle-onboarding.mp4" type="video/mp4">
+          <img src="spindle-onboarding.gif" alt="Screen recording of Spindle's first-run onboarding wizard: entering role and routing facts, naming a first thread, then the finished workspace with the engine-readiness badge.">
+        </video>
+      </div>
+      <figcaption class="sp-cap"><span class="dot"></span>The first-run wizard, recorded in the app — persona → routing → first thread, then the engine-readiness badge.</figcaption>
+    </figure>
+
+    <section class="sp-steps">
+      <article class="sp-step">
+        <span class="lab">Make it yours</span>
+        <h2>The wizard</h2>
+        <p>Three engine-free steps write your role into <code>global/memory.md</code>, your go-to sources into <code>global/routing.md</code>, and scaffold your first thread — real files you could have hand-edited, filled in for you.</p>
+      </article>
+      <article class="sp-step">
+        <span class="lab">Know where you stand</span>
+        <h2>The readiness check</h2>
+        <p>A staged check reports whether opencode is installed, whether the engine actually runs, and whether each Graph connector answers a single read-only call. Cached, and shown as the sidebar health badge.</p>
+      </article>
+      <article class="sp-step">
+        <span class="lab">Unlocks when live</span>
+        <h2>Agent enrichment</h2>
+        <p>Once the engine is connected, the agent proposes routing entries from your real mail and drafts a thread from a task you describe — you edit and confirm before anything is written.</p>
+      </article>
+    </section>
+
+    <footer class="sp-foot">
+      <span><b>Spindle</b> — a personal work harness: threads with their own memory, skills, and inbox. Zero dependencies, all state on disk.</span>
+      <span class="tag">clip recorded in headless Chrome · no edits</span>
+    </footer>
+
+  </div>
+</div>
+
+</body>
+</html>
