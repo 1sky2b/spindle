@@ -20,6 +20,25 @@ delete the server and every thread, memory, and artifact is still readable.
    opencode wired up. Click the `getting-started` thread and send a message -
    you should get a mock reply, and the run should appear in the Runs tab.
 
+## Demo mode (see it in motion first)
+
+Never used Spindle? Start it with sample data and an auto-playing tour:
+
+```
+node server.js --demo        (or set SPINDLE_DEMO=1)
+```
+
+Open http://localhost:4321 and watch: the tour opens a live negotiation
+thread, types a message, streams the agent's reply, walks the Scout inbox,
+artifacts, and the run log, then triggers a Scout sweep that files a fresh
+update - the same product motions you'd use for real, on a realistic
+procurement dataset. Click or press any key to take over at any point;
+everything stays fully interactive.
+
+Demo data is copied to a temp folder at startup - your real `threads/` are
+never touched, the engine is forced to mock, the scheduler is off, and a
+restart resets the demo to pristine.
+
 ## Wiring the real engine (opencode)
 
 1. On your work machine run `opencode run --help` and confirm how a

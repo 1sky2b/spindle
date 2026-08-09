@@ -1,0 +1,9 @@
+{
+  "replies": [
+    {
+      "match": "Reflection pass",
+      "text": "Reflection pass complete.\n\n**memory.md** - added: utility-spec clarification answered to both bidders {{D:-3}}; bids due {{D:10}} unchanged.\n\n**skills/** - rfq-scorecard-method.md already captures the working method; added one pitfall: send clarifications from the RFQ mailbox, not personal mail, so the audit trail stays in one place.\n\n**inbox/** - nothing unprocessed."
+    }
+  ],
+  "default": "Checked memory.md - inbox is clear. Current state: scorecard skeleton is in artifacts, both bidders have the utility-spec clarification, bids are due {{D:10}}.\n\nNothing needs a decision from you until bids land. When they do, I'll populate the TCO buckets, cross-check consumables claims against Fab 1 actuals, and flag anything >10% off. Anything you'd like adjusted in the scorecard before then?"
+}

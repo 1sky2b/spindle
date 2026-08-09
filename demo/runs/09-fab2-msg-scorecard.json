@@ -1,0 +1,6 @@
+{
+  "kind": "message", "agent": "thread", "thread": "fab2-cmp-rfq",
+  "startedAt": "{{ISO:-4d}}", "status": "done", "durationMs": 52900, "exitCode": 0,
+  "promptChars": 344, "outputChars": 1180,
+  "output": "Built the 7-year TCO scorecard skeleton (five buckets, Fab 1 actuals as cross-check column, non-cost criteria scored separately). Saved to artifacts and captured the method as skills/rfq-scorecard-method.md for future RFQs."
+}

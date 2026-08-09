@@ -1,0 +1,10 @@
+{
+  "_notes": "lastActivity sets each thread's sessions/log.md mtime (sidebar sort order), offset from seed time.",
+  "threads": {
+    "tel-cd100-renewal": { "lastActivity": "-2h" },
+    "supplier-risk-watch": { "lastActivity": "-5h" },
+    "lam-spares-pricing": { "lastActivity": "-26h" },
+    "fab2-cmp-rfq": { "lastActivity": "-3d" },
+    "getting-started": { "lastActivity": "-6d" }
+  }
+}

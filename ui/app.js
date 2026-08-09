@@ -10,7 +10,8 @@ const state = { threads: [], current: null, color: "#C98F1F", busy: false, tab: 
 async function loadState() {
   const r = await fetch("/api/state").then((x) => x.json());
   state.threads = r.threads;
-  $("engine-badge").textContent = "engine: " + r.engineMode;
+  state.demo = !!r.demo;
+  $("engine-badge").textContent = "engine: " + r.engineMode + (r.demo ? " · demo" : "");
   $("sched-note").textContent = r.scheduler && r.scheduler.enabled
     ? "Scout scheduled daily at " + (r.scheduler.collectorTime || "07:30")
     : "Scheduler off (config.json)";

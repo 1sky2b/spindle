@@ -71,7 +71,7 @@ button{font-family:var(--body); cursor:pointer;}
 .foot-note{font-size:10.5px; color:var(--sb-mut); margin-top:6px; text-align:center;}
 
 /* ================= main ================= */
-#main{display:flex; flex-direction:column; min-width:0; background:var(--paper);}
+#main{display:flex; flex-direction:column; min-width:0; min-height:0; background:var(--paper);}
 #thread-header{background:var(--card); border-bottom:1px solid var(--line);}
 .thread-line{height:3px; background:var(--gold);}
 .thread-header-row{display:flex; align-items:center; justify-content:space-between; padding:12px 22px;}
@@ -180,3 +180,19 @@ dialog::backdrop{background:rgba(20,27,69,.45);}
 #mode-toggle{padding:6px 10px; border-radius:7px; border:1px solid var(--sb-line);
   background:none; color:var(--sb-text); font-size:12px;}
 #mode-toggle:hover{border-color:var(--sb-accent); color:var(--sb-accent);}
+
+/* ================= demo mode ================= */
+#demo-banner{display:flex; align-items:center; gap:10px; height:40px; padding:0 16px;
+  background:var(--sb-bg); color:var(--sb-text); border-bottom:2px solid var(--sb-accent);
+  font-size:13px; position:relative; z-index:40;}
+#demo-banner b{color:var(--sb-accent); letter-spacing:.5px;}
+.demo-dot{width:8px; height:8px; border-radius:50%; background:var(--sb-accent); animation:demo-pulse 1.6s ease-in-out infinite;}
+@keyframes demo-pulse{0%,100%{opacity:1;} 50%{opacity:.35;}}
+#demo-caption{flex:1; color:var(--sb-mut); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+#demo-tour{padding:5px 12px; border-radius:7px; border:1px solid var(--sb-accent);
+  background:none; color:var(--sb-accent); font-size:12.5px; font-weight:600;}
+#demo-tour:hover{background:var(--sb-accent); color:var(--sb-accent-text);}
+body.demo{overflow:hidden;}
+body.demo #app{height:calc(100vh - 42px);}
+.demo-highlight{outline:2px solid var(--sb-accent) !important; outline-offset:2px;
+  box-shadow:0 0 0 5px rgba(232,180,76,.22); border-radius:8px; transition:box-shadow .3s;}

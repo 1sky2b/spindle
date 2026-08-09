@@ -1,0 +1,13 @@
+{
+  "replies": [
+    {
+      "match": "Reflection pass",
+      "text": "Reflection pass complete.\n\n**memory.md** - added: formal 7% letter received {{D:-1}}, 60-day notice clock running from that date; LTA proposal ready but unsent pending your go.\n\n**skills/** - no new skill; the LTA-basket approach is already captured in the price-deltas CSV method.\n\n**inbox/** - moved the Lam price letter to inbox/read."
+    },
+    {
+      "match": "send|proposal|whitfield",
+      "text": "Prepared the LTA proposal for Whitfield - saved to artifacts/{{D:0}}-lam-lta-proposal.md.\n\nCore terms as agreed: 3-year LTA on the top-10 basket (71% of spend) at +2%, quarterly volume floor at 85% of trailing average, catalog tail at list. Explicit clause keeping spares pricing separate from any service agreement.\n\nBlended effective increase: ~3.4% vs the announced 7% - saving roughly $39k/yr against the letter.\n\nIt is drafted, not sent - per the charter I don't send external proposals autonomously. Review it in Files and say the word."
+    }
+  ],
+  "default": "Checked memory.md and the inbox first. The formal 7% letter landed yesterday, which starts the 60-day notice clock - our LTA proposal is drafted and the numbers still hold (blended ~3.4% effective vs 7% announced, ~$39k/yr saved).\n\nOpen decision: when to put the proposal in front of Whitfield. History says they settle fastest when a volume commit is on the table before the increase takes effect, so I'd send this week. What would you like me to do?"
+}

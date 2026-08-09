@@ -1,0 +1,6 @@
+{
+  "kind": "message", "agent": "thread", "thread": "lam-spares-pricing",
+  "startedAt": "{{ISO:-27h}}", "status": "done", "durationMs": 39600, "exitCode": 0,
+  "promptChars": 301, "outputChars": 980,
+  "output": "Checked the last increase cycle against thread memory and the contracts SharePoint: announced 5%, settled 3% via a liners-only volume commit. Applied both lessons to the current LTA ask and kept spares pricing explicitly decoupled from service terms per the charter."
+}

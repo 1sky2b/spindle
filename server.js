@@ -25,8 +25,19 @@ const agentsmd = require("./lib/agentsmd");
 const ROOT = __dirname;
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf8"));
 const PORT = process.env.SPINDLE_PORT || CONFIG.port || 4321;
-const THREADS = path.join(ROOT, "threads");
-const RUNS = path.join(ROOT, "runs");
+
+// Demo mode: serve a throwaway copy of the demo/ fixtures instead of the real
+// data. Real threads/ and runs/ stay untouched; the copy resets on restart.
+const DEMO = process.argv.includes("--demo") || process.env.SPINDLE_DEMO === "1";
+const demo = DEMO ? require("./lib/demo") : null;
+const DATA = DEMO ? demo.seed(ROOT) : ROOT;
+if (DEMO) {
+  CONFIG.engine = Object.assign({}, CONFIG.engine, { mode: "mock" }); // never a real engine on fake data
+  CONFIG.scheduler = Object.assign({}, CONFIG.scheduler, { enabled: false });
+}
+
+const THREADS = path.join(DATA, "threads");
+const RUNS = path.join(DATA, "runs");
 const MIME = {
   ".html": "text/html; charset=utf-8", ".htm": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8",
@@ -103,7 +114,7 @@ function createThread(name, title, purpose) {
   fs.writeFileSync(path.join(tdir, "charter.md"), charter);
   fs.writeFileSync(path.join(tdir, "memory.md"), `# Memory - ${title || slug}\n\n(durable facts and decisions for this thread; one line per fact)\n`);
   fs.writeFileSync(path.join(tdir, "sessions", "log.md"), `# Session log - ${title || slug}\n`);
-  fs.writeFileSync(path.join(tdir, "AGENTS.md"), agentsmd.build(ROOT, slug));
+  fs.writeFileSync(path.join(tdir, "AGENTS.md"), agentsmd.build(DATA, slug));
   return slug;
 }
 
@@ -181,7 +192,7 @@ function tree(dir, base, depth) {
 function searchAll(q) {
   const needle = q.toLowerCase();
   const hits = [];
-  const roots = [["threads", THREADS], ["global", path.join(ROOT, "global")]];
+  const roots = [["threads", THREADS], ["global", path.join(DATA, "global")]];
   const walk = (label, dir) => {
     let entries;
     try { entries = fs.readdirSync(dir, { withFileTypes: true }); } catch (_) { return; }
@@ -195,7 +206,7 @@ function searchAll(q) {
       const lines = text.split("\n");
       for (let i = 0; i < lines.length && hits.length < 60; i++) {
         if (lines[i].toLowerCase().includes(needle)) {
-          hits.push({ scope: label, file: path.relative(ROOT, full).split(path.sep).join("/"), line: i + 1, text: lines[i].trim().slice(0, 200) });
+          hits.push({ scope: label, file: path.relative(DATA, full).split(path.sep).join("/"), line: i + 1, text: lines[i].trim().slice(0, 200) });
         }
       }
     }
@@ -287,9 +298,9 @@ const server = http.createServer(async (req, res) => {
     /* ---- raw files: /files/threads/<t>/... and /files/global/... ---- */
     if (req.method === "GET" && p.startsWith("/files/")) {
       const rel = p.slice("/files/".length);
-      const scopeBase = rel.startsWith("global/") ? ROOT : rel.startsWith("threads/") ? ROOT : null;
+      const scopeBase = rel.startsWith("global/") ? DATA : rel.startsWith("threads/") ? DATA : null;
       if (!scopeBase) return bad(res, "path must start with threads/ or global/");
-      const file = safeJoin(ROOT, rel);
+      const file = safeJoin(DATA, rel);
       if (!file || !fs.existsSync(file) || fs.statSync(file).isDirectory()) return notFound(res);
       const ext = path.extname(file).toLowerCase();
       res.writeHead(200, {
@@ -308,6 +319,7 @@ const server = http.createServer(async (req, res) => {
         threads: listThreads(),
         engineMode: (CONFIG.engine || {}).mode || "mock",
         scheduler: CONFIG.scheduler || {},
+        demo: DEMO,
         roster,
       });
     }
@@ -352,7 +364,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (action === "sync" && req.method === "POST") {
-        fs.writeFileSync(path.join(tdir, "AGENTS.md"), agentsmd.build(ROOT, tname));
+        fs.writeFileSync(path.join(tdir, "AGENTS.md"), agentsmd.build(DATA, tname));
         return send(res, 200, { ok: true });
       }
 
@@ -383,7 +395,7 @@ const server = http.createServer(async (req, res) => {
       }
 
       if (action === "files" && req.method === "GET") {
-        return send(res, 200, { tree: tree(tdir, ROOT, 4) });
+        return send(res, 200, { tree: tree(tdir, DATA, 4) });
       }
       return notFound(res, "unknown thread action");
     }
@@ -401,7 +413,8 @@ const server = http.createServer(async (req, res) => {
 
     if (p === "/api/collector/run" && req.method === "POST") {
       // Fire and record; UI polls /api/runs for status.
-      runCollectorDetached("manual").catch((e) => console.error(e));
+      if (DEMO) demo.scoutDrop(DATA).catch((e) => console.error(e));
+      else runCollectorDetached("manual").catch((e) => console.error(e));
       return send(res, 200, { ok: true, note: "Collector started - watch the Runs tab." });
     }
 
@@ -412,7 +425,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     if (p === "/api/global" && req.method === "GET") {
-      return send(res, 200, { tree: tree(path.join(ROOT, "global"), ROOT, 3) });
+      return send(res, 200, { tree: tree(path.join(DATA, "global"), DATA, 3) });
     }
 
     notFound(res);
@@ -424,7 +437,12 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, "127.0.0.1", () => {
   console.log(`\nSpindle running -> http://localhost:${PORT}`);
-  console.log(`Engine mode: ${(CONFIG.engine || {}).mode || "mock"} ` +
-    `(edit config.json to switch between "mock" and "opencode")\n`);
+  if (DEMO) {
+    console.log(`DEMO MODE: sample data copied to ${DATA}`);
+    console.log(`Your real threads/ are untouched; the demo resets on restart.\n`);
+  } else {
+    console.log(`Engine mode: ${(CONFIG.engine || {}).mode || "mock"} ` +
+      `(edit config.json to switch between "mock" and "opencode")\n`);
+  }
   startScheduler();
 });

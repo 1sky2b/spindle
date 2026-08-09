@@ -1,0 +1,6 @@
+{
+  "kind": "collector", "agent": "Scout", "thread": null, "trigger": "schedule",
+  "startedAt": "{{ISO:-3h}}", "status": "done", "durationMs": 81400, "exitCode": 0,
+  "promptChars": 1840, "outputChars": 468,
+  "output": "Swept mail (22 new), Teams (6 channels), calendar (next 7 days).\n\nFiled 5 updates:\n- tel-cd100-renewal/inbox: TEL revised quote (4.1%), finance budget-lock note\n- supplier-risk-watch/inbox: export-control review, Screen lead-time signal, Brooks Q2 results\n\nCross-references: export-control item also noted for the TEL renewal thread. Skipped 16 items below charter thresholds. No escalations."
+}

@@ -1,0 +1,6 @@
+{
+  "kind": "collector", "agent": "Scout", "thread": null, "trigger": "schedule",
+  "startedAt": "{{ISO:-26h}}", "status": "done", "durationMs": 64200, "exitCode": 0,
+  "promptChars": 1840, "outputChars": 312,
+  "output": "Swept mail (14 new), Teams (6 channels), calendar (next 7 days).\n\nFiled 2 updates:\n- lam-spares-pricing/inbox: formal 7% price letter received\n- tel-cd100-renewal/inbox: nothing new today beyond the open quote thread\n\nSkipped 11 items that met no thread's charter thresholds. No escalations."
+}

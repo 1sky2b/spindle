@@ -1,0 +1,7 @@
+position,term_years,escalation_pct,year1_cost_usd,year3_cost_usd,sunday_coverage,response_sla,notes
+Current contract,expiring,n/a,1420000,n/a,yes,next business day,expires Oct 31
+TEL opening ({{D:-9}}),3,5.5,1498100,1667300,dropped,next business day,scope cut buried in SLA table
+TEL rev 1 ({{D:0}}),3,4.1,1478200,1601500,restored,next business day,valid through end of month
+Our target,3,3.0,1462600,1551400,yes,4 hours,inside $1.47M ceiling
+Walk-away,3,3.5,1469700,1574900,yes,4 hours,above this go year-to-year and re-tender
+Lam benchmark (last yr),3,2.4,n/a,n/a,yes,8 hours,comparable fleet size; closed at 2.4%
